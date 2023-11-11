@@ -74,3 +74,9 @@ sql: INSERT INTO `EducationPosts` (`id`,`content`,`timestamp`,`category`,`create
 2023-11-11T08:46:31.651Z [error]: Request failed with status code 503
 2023-11-11T08:48:32.759Z [error]: Cannot access 'nlpRes' before initialization
 2023-11-11T08:49:13.932Z [error]: Cannot access 'nlpRes' before initialization
+2023-11-11T18:41:16.855Z [error]: uuidv4 is not defined
+2023-11-11T18:42:07.645Z [error]: notNull Violation: user.created_at cannot be null,
+notNull Violation: user.updated_at cannot be null
+2023-11-11T18:45:46.488Z [error]: WHERE parameter "id" has invalid "undefined" value
+2023-11-11T18:47:16.423Z [error]: Assignment to constant variable.
+2023-11-11T18:48:50.817Z [error]: Assignment to constant variable.

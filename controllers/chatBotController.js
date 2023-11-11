@@ -4,12 +4,47 @@ const logger = require('../logger');
 const openai = new OpenAI();
 const { format } = require('date-fns');
 const CircularJSON = require('circular-json');
+const User = require('../models/userModel');
+const Comment = require('../models/commentModel');
+const Post = require('../models/eduPostModel')
+const { v4: uuidv4 } = require('uuid'); 
+
 
 async function chatBot(req, res) {
   try {
     const { message, location, username, postId } = req.body;
-
     
+    const [waverx, created] = await User.findOrCreate({
+      where: { username: 'waverx' },
+      defaults: {
+        id: uuidv4(),
+        username: 'waverx',
+        first_name: 'waverx',
+        last_name: 'waverx',
+        bio: 'waverx speaks',
+        email: 'climatewaver@gmail.com',
+        updated_at: new Date(), 
+        created_at: new Date(),   
+        is_verified: true,
+        is_active: true
+      }
+    });
+
+    // If the user 'waverx' already exists, update its properties
+    if (!created) {
+      waverx.username = 'waverx';
+      await waverx.save();
+    }
+
+    // Check if the post with the given postId exists
+    const post = await Post.findOne({
+      where: { id: postId },
+    });
+
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
     // Axios request to fetch NLP response
     const nlpResponse = await axios.post('https://waver-x-nlp-climatewavers-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com/api/v1/nlp/model/waverx', `text=${message}`);
     const prediction = nlpResponse.data.prediction;
@@ -40,9 +75,21 @@ async function chatBot(req, res) {
 
     // Pass the analysis response and message to the OpenAI function
     const aiResponse = await generateOpenAIResponse(parsedResponse, nlpRes, message, username);
+ 
+    const commentId = uuidv4();
+    const comment = await Comment.create({
+      id: commentId,
+      content_image: null, 
+      comment_content: aiResponse,
+      comment_time: new Date(),
+      commenter_id: waverx.id,
+      parent_comment_id: null,
+      post_id: postId,
+    });
+
     // Send the final response
-    res.status(201).json({ response: aiResponse });
-  } catch (error) {
+    res.status(201).json({ response: aiResponse, commentId: comment.id });
+   } catch (error) {
     logger.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -50,7 +97,7 @@ async function chatBot(req, res) {
 
 async function generateOpenAIResponse(parsedResponse, nlpRes, message, username) {
   try {
-    const usern = "Buhari"
+    
     let alt = ` what ${parsedResponse} means`
     let arr = ['Storm', 'Earthquake', 'Flood'];
     nlpRes = nlpRes.charAt(0).toUpperCase();
@@ -64,7 +111,7 @@ async function generateOpenAIResponse(parsedResponse, nlpRes, message, username)
                    and our analysis model returns ${parsedResponse}. 
                   Compare the information, let the user also help by providing proof like pictures or videos of the disaster
                   write a personalized message explaining to the user, ${alt} 
-                  the user's name is ${usern} add sincerely waverx at the end
+                  the user's name is ${username} add sincerely waverx at the end
                   `;  
 
     // Generate a response using OpenAI
@@ -108,7 +155,7 @@ async function OpenAINlp(prediction, message) {
   }
 }
 
-
+ 
 
 module.exports = {
   chatBot

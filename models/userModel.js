@@ -3,7 +3,7 @@ const { sequelize } = require('../db/mariaDb');
 
 const User = sequelize.define('user', {
 
-  id: {
+  id: { 
     type: DataTypes.STRING(150),
     primaryKey: true,
     allowNull: false,
