@@ -3,6 +3,7 @@ const OpenAI = require("openai");
 const logger = require('../logger');
 const openai = new OpenAI();
 const { format } = require('date-fns');
+const fs = require('fs');
 const CircularJSON = require('circular-json');
 const User = require('../models/userModel');
 const Comment = require('../models/commentModel');
@@ -12,7 +13,7 @@ const { v4: uuidv4 } = require('uuid');
 
 async function chatBot(req, res) {
   try {
-    const { message, location, username, postId } = req.body;
+    const { message, location, username, postId, image } = req.body;
     
     const [waverx, created] = await User.findOrCreate({
       where: { username: 'waverx' },
@@ -72,6 +73,11 @@ async function chatBot(req, res) {
     // Axios request to post data for analysis
     const analysisResponse = await axios.post('https://waver-x-analysis-climatewavers-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com/api/v1/analysis/model/waverx', data);
    const parsedResponse = CircularJSON.stringify(analysisResponse.data);
+
+   if (image) {
+    // Call the function to send the image to the computer vision model
+    const visionResponse = await sendImageToComputerVision(image);
+  }
 
     // Pass the analysis response and message to the OpenAI function
     const aiResponse = await generateOpenAIResponse(parsedResponse, nlpRes, message, username);
@@ -155,7 +161,45 @@ async function OpenAINlp(prediction, message) {
   }
 }
 
- 
+
+/*
+async function sendImageToComputerVision(imagePath) {
+  try {
+    // Read the image file and encode it in base64
+    const imageBase64 = fs.readFileSync(imagePath, 'base64');
+
+    // Replace with your computer vision model endpoint
+    const visionUrl = 'https://waverx-vision-ovms-climatewavers-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com/v2/waverx-vision/infer';
+
+    // Define your request payload
+    const visionPayload = {
+      instances: [
+        {
+          image: { b64: imageBase64 },
+        },
+      ],
+    };
+
+    // Send HTTPS POST request to the computer vision model endpoint
+    const response = await axios.post(visionUrl, visionPayload, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Process the response from the computer vision model
+    const visionResult = response.data;
+
+    // Return or process the result as needed
+    return visionResult;
+  } catch (error) {
+    // Handle errors
+    console.error('Error sending image to the computer vision model:', error);
+    throw error;
+  }
+}
+
+*/
 
 module.exports = {
   chatBot
