@@ -2,8 +2,7 @@
 
 ## Overview
 
-Welcome to waverX ChatBot! This chatBot provides answers to questions related to climate and disaster.
-This README provides an in-depth guide on setting up, using, and contributing to this project.
+Welcome to waverX model! This microservice is waverX model response system. Generating responses for our models results
 
 ## Table of Contents
 
