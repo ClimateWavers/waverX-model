@@ -23,9 +23,7 @@ async function chatBot(req, res) {
         first_name: 'waverx',
         last_name: 'waverx',
         bio: 'waverx speaks',
-        email: 'climatewaver@gmail.com',
-        updated_at: new Date(), 
-        created_at: new Date(),   
+        email: 'climatewaver@gmail.com', 
         is_verified: true,
         is_active: true
       }
