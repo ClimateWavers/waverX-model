@@ -85,17 +85,10 @@ const User = sequelize.define('user', {
     type: DataTypes.BOOLEAN,
     allowNull: true,
   },
-  created_at: {
-    type: DataTypes.DATE(6),
-    allowNull: false,
-  },
-  updated_at: {
-    type: DataTypes.DATE(6),
-    allowNull: false,
-  }
 },{
   tableName: 'user',
   timestamps: true,
+  underscored: true
 });
 
 
