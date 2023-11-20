@@ -8,13 +8,13 @@ const CircularJSON = require('circular-json');
 const User = require('../models/userModel');
 const Comment = require('../models/commentModel');
 const Post = require('../models/eduPostModel')
-const { v4: uuidv4 } = require('uuid'); 
+const { v4: uuidv4 } = require('uuid');
 
 
 async function chatBot(req, res) {
   try {
     const { message, location, username, postId, image } = req.body;
-    
+
     const [waverx, created] = await User.findOrCreate({
       where: { username: 'waverx' },
       defaults: {
@@ -23,7 +23,7 @@ async function chatBot(req, res) {
         first_name: 'waverx',
         last_name: 'waverx',
         bio: 'waverx speaks',
-        email: 'climatewaver@gmail.com', 
+        email: 'climatewaver@gmail.com',
         is_verified: true,
         is_active: true
       }
@@ -67,7 +67,7 @@ async function chatBot(req, res) {
     data.append('endDate', endDate);
     data.append('disasterType', nlpRes);
 
-    
+
     // Axios request to post data for analysis
     const analysisResponse = await axios.post('https://waver-x-analysis-climatewavers-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com/api/v1/analysis/model/waverx', data);
    const parsedResponse = CircularJSON.stringify(analysisResponse.data);
@@ -79,11 +79,11 @@ async function chatBot(req, res) {
 
     // Pass the analysis response and message to the OpenAI function
     const aiResponse = await generateOpenAIResponse(parsedResponse, nlpRes, message, username);
- 
+
     const commentId = uuidv4();
     const comment = await Comment.create({
       id: commentId,
-      content_image: null, 
+      content_image: null,
       comment_content: aiResponse,
       comment_time: new Date(),
       commenter_id: waverx.id,
@@ -101,22 +101,22 @@ async function chatBot(req, res) {
 
 async function generateOpenAIResponse(parsedResponse, nlpRes, message, username) {
   try {
-    
+
     let alt = ` what ${parsedResponse} means`
     let arr = ['Storm', 'Earthquake', 'Flood'];
-    nlpRes = nlpRes.charAt(0).toUpperCase();
+    nlpRes = nlpRes.charAt(0).toUpperCase() + nlpRes.slice(1);
     if (!arr.includes(nlpRes)) {
       alt = `Why and why not the ${nlpRes} will occur`
 
     }
-    
-    
+
+
     const text = `user's post is ${message}, nlp model returns ${nlpRes}
-                   and our analysis model returns ${parsedResponse}. 
+                   and our analysis model returns ${parsedResponse}.
                   Compare the information, let the user also help by providing proof like pictures or videos of the disaster
-                  write a personalized message explaining to the user, ${alt} 
+                  write a personalized message explaining to the user, ${alt}
                   the user's name is ${username} add sincerely waverx at the end
-                  `;  
+                  `;
 
     // Generate a response using OpenAI
     const completion = await openai.completions.create({
@@ -136,7 +136,7 @@ async function generateOpenAIResponse(parsedResponse, nlpRes, message, username)
 
 async function OpenAINlp(prediction, message) {
   try {
-    
+
     const text = ` the user says ${message} and the nlp model predicts ${prediction}
                 confirm and provide what label the user message suits most in the following labels
                 Earthquake, Drought, Damaged infrasture, Human Damage, Human, Landslide, Non Damage Buildings and Street,
