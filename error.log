@@ -80,3 +80,7 @@ notNull Violation: user.updated_at cannot be null
 2023-11-11T18:45:46.488Z [error]: WHERE parameter "id" has invalid "undefined" value
 2023-11-11T18:47:16.423Z [error]: Assignment to constant variable.
 2023-11-11T18:48:50.817Z [error]: Assignment to constant variable.
+2023-11-20T00:06:59.085Z [error]: (conn=1088, no: 1054, SQLState: 42S22) Unknown column 'comment_count' in 'field list'
+sql: SELECT `id`, `date_created`, `content_text`, `content_image`, `comment_count`, `category`, `user_id` FROM `post` AS `post` WHERE `post`.`id` = '50e225c3-1a33-49b0-857a-daa003d4dd2b'; - parameters:[]
+2023-11-20T00:16:20.834Z [error]: (conn=1092, no: 1054, SQLState: 42S22) Unknown column 'comment_count' in 'field list'
+sql: SELECT `id`, `date_created`, `content_text`, `content_image`, `comment_count`, `category`, `user_id` FROM `post` AS `post` WHERE `post`.`id` = '531e0dfc-8c66-4ec1-be14-10d1ac529763'; - parameters:[]

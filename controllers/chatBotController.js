@@ -39,7 +39,7 @@ async function chatBot(req, res) {
     const post = await Post.findOne({
       where: { id: postId },
     });
-
+	  console.log(post)
     if (!post) {
       return res.status(404).json({ error: 'Post not found' });
     }

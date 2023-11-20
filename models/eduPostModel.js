@@ -20,11 +20,6 @@ const Post = sequelize.define('post', {
     type: DataTypes.STRING(100),
     allowNull: true,
   },
-  comment_count: {
-    type: DataTypes.INTEGER.UNSIGNED,
-    allowNull: false,
-    defaultValue: 0,
-  },
   category: {
     type: DataTypes.STRING(20),
     allowNull: false,
@@ -35,7 +30,7 @@ const Post = sequelize.define('post', {
   },
 },
 {
-  tableName: 'posts',
+  tableName: 'post',
   timestamps: false,
 });
 
